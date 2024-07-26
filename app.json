@@ -12,16 +12,36 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Found needs access to your Camera.",
+        "NSMicrophoneUsageDescription": "Found needs access to your Microphone."
+      },
+      "bundleIdentifier": "com.rutvik.dev.Found"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.rutvik.dev.Found"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "Found needs access to your Camera.",
+          "enableMicrophonePermission": true,
+          "microphonePermissionText": "Found needs access to your Microphone."
+        }
+      ]
+    ]
   }
 }
