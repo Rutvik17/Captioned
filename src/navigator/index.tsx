@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import styled from 'styled-components/native';
-import CameraPage from '../components/camera';
 import OnboardingPage from '../components/onboarding';
 import PermissionsPage from '../components/camera/permissions';
 import { Camera } from 'react-native-vision-camera';
 import * as SecureStore from 'expo-secure-store';
 import * as SplashScreen from 'expo-splash-screen';
+import { MediaPage } from '../components/media';
+import CameraPage from '../components/camera';
 
 export type RootStackParamList = {
     HomePage: undefined;
@@ -16,8 +17,6 @@ export type RootStackParamList = {
         path: string
         type: 'video' | 'photo'
     };
-    Devices: undefined;
-    CodeScannerPage: undefined;
 };
 
 export type OnboardingStackParamList = {
@@ -71,12 +70,16 @@ const HomeNavigator = () => {
                 initialRouteName={'CameraPage'}
                 screenOptions={{
                     headerShown: false,
-                    animationTypeForReplace: 'push',
+                    animationTypeForReplace: 'pop',
                 }}
             >
                 <Stack.Screen
                     name="CameraPage"
                     component={CameraPage}
+                />
+                <Stack.Screen
+                    name="MediaPage"
+                    component={MediaPage}
                 />
             </Stack.Navigator>
         </StyledGestureHandlerRootView>

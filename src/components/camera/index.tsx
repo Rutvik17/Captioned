@@ -17,7 +17,7 @@ import { useEffect } from 'react'
 import { PressableOpacity } from 'react-native-pressable-opacity'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import IonIcon from 'react-native-vector-icons/Ionicons'
-import type { NativeStackScreenProps } from '@react-navigation/native-stack'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useIsFocused } from '@react-navigation/core'
 import { RootStackParamList } from '../../navigator'
 import { CaptureButton } from './captureButton'
@@ -60,7 +60,7 @@ const StyledEmptyContainer = styled.View`
 
 const CameraPage = (): React.ReactElement => {
     const camera = useRef<Camera>(null)
-    const navigation = useNavigation<NativeStackScreenProps<RootStackParamList, 'CameraPage'>>();
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [isCameraInitialized, setIsCameraInitialized] = useState(false)
     const microphone = useMicrophonePermission()
     const location = useLocationPermission()
@@ -232,7 +232,7 @@ const CameraPage = (): React.ReactElement => {
                                 enableZoomGesture={false}
                                 animatedProps={cameraAnimatedProps}
                                 exposure={0}
-                                enableFpsGraph={true}
+                                enableFpsGraph={false}
                                 outputOrientation="device"
                                 photo={true}
                                 video={true}
@@ -286,12 +286,6 @@ const CameraPage = (): React.ReactElement => {
                         <IonIcon name={enableNightMode ? 'moon' : 'moon-outline'} color="white" size={24} />
                     </PressableOpacity>
                 )}
-                <PressableOpacity style={styles.button} onPress={() => navigation.navigate('Devices')}>
-                    <IonIcon name="settings-outline" color="white" size={24} />
-                </PressableOpacity>
-                <PressableOpacity style={styles.button} onPress={() => navigation.navigate('CodeScannerPage')}>
-                    <IonIcon name="qr-code-outline" color="white" size={24} />
-                </PressableOpacity>
             </StyledRightButtonRow>
         </CameraPageView>
     )
