@@ -41,7 +41,8 @@
           "enableMicrophonePermission": true,
           "microphonePermissionText": "Found needs access to your Microphone."
         }
-      ]
+      ],
+      "expo-secure-store"
     ]
   }
 }
