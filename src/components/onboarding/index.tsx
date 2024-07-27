@@ -9,21 +9,27 @@ import Pagination from './pagination';
 import RenderOnboardingPage from './renderPage';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../navigator';
+import { OnboardingStackParamList } from '../../navigator';
 import * as SecureStore from 'expo-secure-store';
-
-type Props = {
-    setOnboardingComplete: React.Dispatch<React.SetStateAction<boolean>>
-}
+import { Camera } from 'react-native-vision-camera';
 
 const OnboardingView = styled.View`
     flex: 1;
     align-items: center;
 `;
 
-const Onboarding = ({ setOnboardingComplete }: Props) => {
+type Props = {
+    setOnboardingComplete: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const OnboardingPage = ({ setOnboardingComplete }: Props) => {
     const pd = PixelRatio.get();
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const navigation = useNavigation<NativeStackNavigationProp<OnboardingStackParamList>>();
+
+    const cameraPermission = Camera.getCameraPermissionStatus();
+    const microphonePermission = Camera.getMicrophonePermissionStatus();
+
+    const permissionsRequired = cameraPermission !== 'granted' || microphonePermission === 'not-determined';
 
     const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
     const ref = useRef(null);
@@ -40,7 +46,11 @@ const Onboarding = ({ setOnboardingComplete }: Props) => {
     const handlePress = async () => {
         if (currentIndex === onboardingData.length - 1 && !active) {
             await SecureStore.setItemAsync('onboarding', 'complete');
-            setOnboardingComplete(true);
+            if (permissionsRequired) {
+                navigation.navigate('PermissionsPage');
+            } else {
+                setOnboardingComplete(true);
+            }
             return;
         }
 
@@ -104,4 +114,4 @@ const Onboarding = ({ setOnboardingComplete }: Props) => {
     )
 };
 
-export default Onboarding;
+export default OnboardingPage;

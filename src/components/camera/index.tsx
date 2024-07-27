@@ -25,6 +25,7 @@ import { StatusBarBlurBackground } from './statusBarBlurBackground'
 import { usePreferredCameraDevice } from './hooks/usePreferredCameraDevice'
 import { useIsForeground } from './hooks/useIsForeground'
 import styled from 'styled-components/native'
+import { useNavigation } from '@react-navigation/native'
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera)
 Reanimated.addWhitelistedNativeProps({
@@ -33,8 +34,6 @@ Reanimated.addWhitelistedNativeProps({
 
 const SCALE_FULL_ZOOM = 3
 
-type Props = NativeStackScreenProps<RootStackParamList, 'CameraPage'>;
-
 const CameraPageView = styled.View`
     flex: 1;
     background-color: black;
@@ -42,8 +41,8 @@ const CameraPageView = styled.View`
 
 const StyledRightButtonRow = styled.View`
     position: absolute;
-    right: ${SAFE_AREA_PADDING.paddingRight};
-    top: ${SAFE_AREA_PADDING.paddingTop};
+    right: ${SAFE_AREA_PADDING.paddingRight}px;
+    top: ${SAFE_AREA_PADDING.paddingTop}px;
 `;
 
 const StyledText = styled.Text`
@@ -59,8 +58,9 @@ const StyledEmptyContainer = styled.View`
     align-items: center;
 `;
 
-const CameraPage = ({ navigation }: Props): React.ReactElement => {
+const CameraPage = (): React.ReactElement => {
     const camera = useRef<Camera>(null)
+    const navigation = useNavigation<NativeStackScreenProps<RootStackParamList, 'CameraPage'>>();
     const [isCameraInitialized, setIsCameraInitialized] = useState(false)
     const microphone = useMicrophonePermission()
     const location = useLocationPermission()

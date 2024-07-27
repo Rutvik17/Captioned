@@ -5,12 +5,11 @@ import type { CameraPermissionStatus } from 'react-native-vision-camera'
 import { Camera } from 'react-native-vision-camera'
 import styled from 'styled-components/native'
 import FastImage from 'react-native-fast-image'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../../../navigator'
 
 const BANNER_IMAGE = require('../../../../assets/images/camera.png') as ImageRequireSource
-
-type Props = {
-    setShowPermissionsPage: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
 const StyledPermissionsPage = styled.View`
     flex: 1;
@@ -45,7 +44,12 @@ const StyledText = styled.Text`
     font-style: italic;
 `;
 
+type Props = {
+    setShowPermissionsPage: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
 const PermissionsPage = ({ setShowPermissionsPage }: Props): React.ReactElement => {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [cameraPermissionStatus, setCameraPermissionStatus] = useState<CameraPermissionStatus>('not-determined')
     const [microphonePermissionStatus, setMicrophonePermissionStatus] = useState<CameraPermissionStatus>('not-determined')
 
@@ -68,7 +72,9 @@ const PermissionsPage = ({ setShowPermissionsPage }: Props): React.ReactElement 
     }, [])
 
     useEffect(() => {
-        if (cameraPermissionStatus === 'granted' && microphonePermissionStatus === 'granted') setShowPermissionsPage(false)
+        if (cameraPermissionStatus === 'granted' && microphonePermissionStatus === 'granted') {
+            setShowPermissionsPage(false);
+        }
     }, [cameraPermissionStatus, microphonePermissionStatus, setShowPermissionsPage])
 
     return (
