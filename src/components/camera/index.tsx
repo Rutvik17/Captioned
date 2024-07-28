@@ -42,7 +42,7 @@ const CameraPageView = styled.View`
 const StyledRightButtonRow = styled.View`
     position: absolute;
     right: ${SAFE_AREA_PADDING.paddingRight}px;
-    top: ${SAFE_AREA_PADDING.paddingTop}px;
+    bottom: ${SAFE_AREA_PADDING.paddingBottom}px;
 `;
 
 const StyledText = styled.Text`

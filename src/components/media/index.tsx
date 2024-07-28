@@ -126,12 +126,10 @@ export function MediaPage({ navigation, route }: Props): React.ReactElement {
                     style={StyleSheet.absoluteFill}
                     paused={isVideoPaused}
                     resizeMode="cover"
-                    posterResizeMode="cover"
                     allowsExternalPlayback={false}
                     automaticallyWaitsToMinimizeStalling={false}
                     disableFocus={true}
                     repeat={true}
-                    useTextureView={false}
                     controls={false}
                     playWhenInactive={true}
                     ignoreSilentSwitch="ignore"
