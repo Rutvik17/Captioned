@@ -7,7 +7,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>Found</string>
+    <string>Captioned</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -27,7 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.rutvik.dev.Found</string>
+          <string>com.rutvik.dev.Captioned</string>
         </array>
       </dict>
     </array>
@@ -43,9 +43,11 @@
       <true/>
     </dict>
     <key>NSCameraUsageDescription</key>
-    <string>Found needs access to your Camera.</string>
+    <string>Captioned needs access to your Camera.</string>
+    <key>NSFaceIDUsageDescription</key>
+    <string>Allow $(PRODUCT_NAME) to access your Face ID biometric data.</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Found needs access to your Microphone.</string>
+    <string>Captioned needs access to your Microphone.</string>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

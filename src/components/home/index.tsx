@@ -122,8 +122,8 @@ const Tabs = ({ scrollX, data, onItemPress }: { scrollX: Animated.Value, data: D
         <TabsOuterView>
             <TabsInnerView ref={containerRef}>
                 {data.map((item, index) =>
-                    <PressableOpacity onPress={() => onItemPress(index)}>
-                        <Tab key={item.key} item={item} ref={item.ref} />
+                    <PressableOpacity key={item.key} onPress={() => onItemPress(index)}>
+                        <Tab item={item} ref={item.ref} />
                     </PressableOpacity>
                 )}
             </TabsInnerView>

@@ -244,7 +244,7 @@ const CameraPage = (): React.ReactElement => {
                 </GestureDetector>
             ) : (
                 <StyledEmptyContainer>
-                    <StyledText>Your phone does not support Found camera.</StyledText>
+                    <StyledText>Your phone does not support Captioned camera.</StyledText>
                 </StyledEmptyContainer>
             )}
 

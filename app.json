@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Found",
-    "slug": "Found",
+    "name": "Captioned",
+    "slug": "captioned",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,10 +14,10 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "Found needs access to your Camera.",
-        "NSMicrophoneUsageDescription": "Found needs access to your Microphone."
+        "NSCameraUsageDescription": "Captioned needs access to your Camera.",
+        "NSMicrophoneUsageDescription": "Captioned needs access to your Microphone."
       },
-      "bundleIdentifier": "com.rutvik.dev.Found"
+      "bundleIdentifier": "com.rutvik.dev.Captioned"
     },
     "android": {
       "adaptiveIcon": {
@@ -28,7 +28,7 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.rutvik.dev.Found"
+      "package": "com.rutvik.dev.Captioned"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,9 +37,9 @@
       [
         "react-native-vision-camera",
         {
-          "cameraPermissionText": "Found needs access to your Camera.",
+          "cameraPermissionText": "Captioned needs access to your Camera.",
           "enableMicrophonePermission": true,
-          "microphonePermissionText": "Found needs access to your Microphone."
+          "microphonePermissionText": "Captioned needs access to your Microphone."
         }
       ],
       "expo-secure-store"

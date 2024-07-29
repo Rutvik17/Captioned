@@ -1,4 +1,4 @@
-rootProject.name = 'Found'
+rootProject.name = 'Captioned'
 
 dependencyResolutionManagement {
   versionCatalogs {

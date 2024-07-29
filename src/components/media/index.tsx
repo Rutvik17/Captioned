@@ -97,7 +97,7 @@ export function MediaPage({ navigation, route }: Props): React.ReactElement {
 
             const hasPermission = await requestSavePermission()
             if (!hasPermission) {
-                Alert.alert('Permission denied!', 'Found does not have permission to save the media to your camera roll.')
+                Alert.alert('Permission denied!', 'Captioned does not have permission to save the media to your camera roll.')
                 return
             }
             await CameraRoll.save(`file://${path}`, {

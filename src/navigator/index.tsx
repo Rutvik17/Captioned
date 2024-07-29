@@ -49,13 +49,21 @@ const RootNavigator = () => {
 
     if (loading) return;
 
-    if (!onboardingComplete || showPermissionsPage) {
+    if (!onboardingComplete) {
         return <OnboardingNavigator
-            initialRouteName={onboardingComplete ? 'PermissionsPage' : 'OnboardingPage'}
+            initialRouteName={'OnboardingPage'}
             setShowPermissionsPage={setShowPermissionsPage}
             setOnboardingComplete={setOnboardingComplete}
         />
     };
+
+    if (showPermissionsPage) {
+        return <OnboardingNavigator
+            initialRouteName={'PermissionsPage'}
+            setShowPermissionsPage={setShowPermissionsPage}
+            setOnboardingComplete={setOnboardingComplete}
+        />
+    }
 
     return (
         <HomeNavigator />

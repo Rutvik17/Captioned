@@ -81,7 +81,7 @@ const PermissionsPage = ({ setShowPermissionsPage }: Props): React.ReactElement 
         <StyledPermissionsPage>
             <StyledBanner source={BANNER_IMAGE} resizeMode='contain' />
             <StyledText>
-                Please grant Found permissions to following
+                Please grant Captioned permissions to following
             </StyledText>
             {cameraPermissionStatus !== 'granted' && (
                 <StyledButton onPress={requestCameraPermission}>
