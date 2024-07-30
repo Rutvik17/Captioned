@@ -225,9 +225,9 @@ const CameraPage = (): React.ReactElement => {
                                 onUIRotationChanged={(degrees) => console.log(`UI Rotation changed: ${degrees}°`)}
                                 format={format}
                                 fps={fps}
-                                photoHdr={photoHdr}
-                                videoHdr={videoHdr}
-                                photoQualityBalance="quality"
+                                photoHdr={false}
+                                videoHdr={false}
+                                photoQualityBalance="speed"
                                 lowLightBoost={device.supportsLowLightBoost && enableNightMode}
                                 enableZoomGesture={false}
                                 animatedProps={cameraAnimatedProps}

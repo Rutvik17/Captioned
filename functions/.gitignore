@@ -1,0 +1,5 @@
+node_modules/
+*.local
+.env
+firebase-admin.json
+firebase-debug.log

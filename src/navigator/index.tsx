@@ -9,7 +9,6 @@ import * as SecureStore from 'expo-secure-store';
 import * as SplashScreen from 'expo-splash-screen';
 import { MediaPage } from '../components/media';
 import CameraPage from '../components/camera';
-import HomePage from '../components/home';
 
 export type RootStackParamList = {
     HomePage: undefined;
@@ -76,19 +75,22 @@ const HomeNavigator = () => {
     return (
         <StyledGestureHandlerRootView>
             <Stack.Navigator
-                initialRouteName={'HomePage'}
+                initialRouteName={'CameraPage'}
                 screenOptions={{
                     headerShown: false,
                     animationTypeForReplace: 'pop',
                 }}
             >
                 <Stack.Screen
-                    name="HomePage"
-                    component={HomePage}
+                    name="CameraPage"
+                    component={CameraPage}
                 />
                 <Stack.Screen
                     name="MediaPage"
                     component={MediaPage}
+                    options={{
+                        presentation: 'modal',
+                    }}
                 />
             </Stack.Navigator>
         </StyledGestureHandlerRootView>

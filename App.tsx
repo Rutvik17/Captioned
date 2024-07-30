@@ -3,9 +3,12 @@ import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import RootNavigator from './src/navigator';
+import { initializeApp } from 'firebase/app';
+import firebaseConfig from './firebase';
 
-// Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
+
+initializeApp(firebaseConfig)
 
 export default function App() {
   return (

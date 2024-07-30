@@ -14,6 +14,8 @@ import { StatusBarBlurBackground } from '../camera/statusBarBlurBackground'
 import { useIsForeground } from '../camera/hooks/useIsForeground'
 import { SAFE_AREA_PADDING } from '../camera/constants'
 import styled from 'styled-components/native'
+import { getStorage, ref, uploadBytesResumable } from 'firebase/storage';
+import { httpsCallable, getFunctions } from 'firebase/functions';
 
 const requestSavePermission = async (): Promise<boolean> => {
     // On Android 13 and above, scoped storage is used instead and no permission is needed
@@ -56,13 +58,12 @@ const SaveButton = styled(PressableOpacity)`
     height: 40px;
 `;
 
-const StyledIcon = styled.View`
-    text-shadow-color: black;
-    text-shadow-offset: {
-        height: 0,
-        width: 0,
-    };
-    text-shadow-radius: 1;
+const UploadButton = styled(PressableOpacity)`
+    position: absolute;
+    bottom: ${SAFE_AREA_PADDING.paddingBottom}px;
+    right: ${SAFE_AREA_PADDING.paddingRight}px;
+    width: 40px;
+    height: 40px;
 `;
 
 export function MediaPage({ navigation, route }: Props): React.ReactElement {
@@ -111,6 +112,38 @@ export function MediaPage({ navigation, route }: Props): React.ReactElement {
         }
     }, [path, type])
 
+    const uploadMedia = useCallback(async () => {
+        const storage = getStorage();
+        const filename = path.substring(path.lastIndexOf('/') + 1);
+        const storagePath = type === 'photo' ? `images/${filename}` : `videos/${filename}`;
+        const storageRef = ref(storage, storagePath);
+        const response = await fetch(path);
+        const uploadTask = uploadBytesResumable(storageRef, await response.blob());
+
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                // Handle progress
+                console.log(snapshot.bytesTransferred / snapshot.totalBytes)
+            },
+            (error) => {
+                // Handle error
+                console.log(error)
+            },
+            async () => {
+                try {
+                    const generateMediaCaptions = httpsCallable(getFunctions(), 'generateMediaCaptions')
+                    const result = await generateMediaCaptions({
+                        path: storagePath,
+                        type: type
+                    });
+                    console.log(result.data);
+                } catch (error) {
+                    console.error(error)
+                }
+            }
+        );
+    }, [])
+
     const source = useMemo(() => ({ uri: `file://${path}` }), [path])
 
     const screenStyle = useMemo(() => ({ opacity: hasMediaLoaded ? 1 : 0 }), [hasMediaLoaded])
@@ -148,6 +181,10 @@ export function MediaPage({ navigation, route }: Props): React.ReactElement {
                 {savingState === 'saved' && <IonIcon name="checkmark" size={35} color="white" style={styles.icon} />}
                 {savingState === 'saving' && <ActivityIndicator color="white" />}
             </SaveButton>
+
+            <UploadButton onPress={uploadMedia}>
+                <IonIcon name="cloud-upload" size={35} color="white" style={styles.icon} />
+            </UploadButton>
 
             <StatusBarBlurBackground />
         </MediaPageView>

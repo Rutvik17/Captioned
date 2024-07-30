@@ -4,6 +4,7 @@ import styled from 'styled-components/native';
 import { StyleSheet, View, Animated } from 'react-native';
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../camera/constants';
 import { PressableOpacity } from 'react-native-pressable-opacity';
+import { FlatList } from 'react-native-gesture-handler';
 
 interface DataItem {
     key: string;
@@ -29,7 +30,7 @@ const RootView = styled.View`
     flex: 1;
 `;
 
-const RootFlatList = styled(Animated.FlatList)``;
+const RootFlatList = styled(FlatList)``;
 
 const RenderItemView = styled.View`
     flex:1;
@@ -134,7 +135,7 @@ const Tabs = ({ scrollX, data, onItemPress }: { scrollX: Animated.Value, data: D
 
 const HomePage = () => {
     const scrollX = useRef(new Animated.Value(0)).current;
-    const flatListRef = useRef<Animated.FlatList>(null);
+    const flatListRef = useRef<FlatList>(null);
     const onItemPress = useCallback((itemIndex: number) => {
         flatListRef.current?.scrollToOffset({
             offset: itemIndex * SCREEN_WIDTH
