@@ -89,12 +89,28 @@ const UploadButtons = styled.View`
     bottom: ${SAFE_AREA_PADDING.paddingBottom}px;
 `;
 
-const CloseButton = styled(PressableOpacity)`
-    position: absolute;
+const Header = styled.View`
+    height: 40px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     top: ${SAFE_AREA_PADDING.paddingTop}px;
-    left: ${SAFE_AREA_PADDING.paddingLeft}px;
+`;
+
+const Title = styled.Text`
+    font-size: 24px;
+    color: white;
+`;
+
+const CloseButton = styled(PressableOpacity)`
+    z-index: 1;
     width: 40px;
     height: 40px;
+    position: absolute;
+    align-items: center;
+    justify-content: center;
+    top: ${SAFE_AREA_PADDING.paddingTop}px;
+    left: ${SAFE_AREA_PADDING.paddingLeft}px;
 `;
 
 const IconButton = styled(PressableOpacity)`
@@ -208,6 +224,22 @@ const CaptionsPage = () => {
 
     return (
         <RootView>
+            <CloseButton onPress={() => {
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'CameraPage' }],
+                });
+            }}>
+                <IonIcon name="close" size={35} color="white" style={styles.icon} />
+            </CloseButton>
+            <Header>
+                {/* <View style={{ width: 80, height: 40 }} /> */}
+                <Title>
+                    CAPTIONS
+                </Title>
+                {/* <View style={{ width: 80, height: 40 }} /> */}
+            </Header>
+
             <RootFlatList
                 ref={flatListRef}
                 data={data}
@@ -234,15 +266,6 @@ const CaptionsPage = () => {
                     );
                 }}
             />
-
-            <CloseButton onPress={() => {
-                navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'CameraPage' }],
-                });
-            }}>
-                <IonIcon name="close" size={35} color="white" style={styles.icon} />
-            </CloseButton>
 
             <Tabs scrollX={scrollX} data={data} onItemPress={onItemPress} />
 
