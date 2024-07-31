@@ -9,14 +9,15 @@ import * as SecureStore from 'expo-secure-store';
 import * as SplashScreen from 'expo-splash-screen';
 import { MediaPage } from '../components/media';
 import CameraPage from '../components/camera';
+import CaptionsPage from '../components/captions';
 
 export type RootStackParamList = {
-    HomePage: undefined;
     CameraPage: undefined;
     MediaPage: {
         path: string
         type: 'video' | 'photo'
     };
+    CaptionsPage: undefined;
 };
 
 export type OnboardingStackParamList = {
@@ -89,7 +90,15 @@ const HomeNavigator = () => {
                     name="MediaPage"
                     component={MediaPage}
                     options={{
+                        gestureEnabled: false
+                    }}
+                />
+                <Stack.Screen
+                    name="CaptionsPage"
+                    component={CaptionsPage}
+                    options={{
                         presentation: 'modal',
+                        gestureEnabled: false
                     }}
                 />
             </Stack.Navigator>

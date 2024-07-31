@@ -16,6 +16,8 @@ import { SAFE_AREA_PADDING } from '../camera/constants'
 import styled from 'styled-components/native'
 import { getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { httpsCallable, getFunctions } from 'firebase/functions';
+import { captionsPrompt } from '../../utils/prompt'
+import useCaptionedStore from '../../store'
 
 const requestSavePermission = async (): Promise<boolean> => {
     // On Android 13 and above, scoped storage is used instead and no permission is needed
@@ -50,24 +52,25 @@ const CloseButton = styled(PressableOpacity)`
     height: 40px;
 `;
 
-const SaveButton = styled(PressableOpacity)`
-    position: absolute;
-    bottom: ${SAFE_AREA_PADDING.paddingBottom}px;
-    left: ${SAFE_AREA_PADDING.paddingLeft}px;
-    width: 40px;
-    height: 40px;
-`;
-
-const UploadButton = styled(PressableOpacity)`
+const UploadButtons = styled.View`
     position: absolute;
     bottom: ${SAFE_AREA_PADDING.paddingBottom}px;
     right: ${SAFE_AREA_PADDING.paddingRight}px;
-    width: 40px;
-    height: 40px;
+`;
+
+const DownloadButtons = styled.View`
+    position: absolute;
+    bottom: ${SAFE_AREA_PADDING.paddingBottom}px;
+    left: ${SAFE_AREA_PADDING.paddingLeft}px;
+`;
+
+const IconButton = styled(PressableOpacity)`
+    padding: 16px;
 `;
 
 export function MediaPage({ navigation, route }: Props): React.ReactElement {
-    const { path, type } = route.params
+    const { path, type } = route.params;
+    const { updateMedia } = useCaptionedStore();
     const [hasMediaLoaded, setHasMediaLoaded] = useState(false)
     const isForeground = useIsForeground()
     const isScreenFocused = useIsFocused()
@@ -113,13 +116,12 @@ export function MediaPage({ navigation, route }: Props): React.ReactElement {
     }, [path, type])
 
     const uploadMedia = useCallback(async () => {
-        const storage = getStorage();
         const filename = path.substring(path.lastIndexOf('/') + 1);
         const storagePath = type === 'photo' ? `images/${filename}` : `videos/${filename}`;
+        const storage = getStorage();
         const storageRef = ref(storage, storagePath);
         const response = await fetch(path);
         const uploadTask = uploadBytesResumable(storageRef, await response.blob());
-
         uploadTask.on('state_changed',
             (snapshot) => {
                 // Handle progress
@@ -134,9 +136,15 @@ export function MediaPage({ navigation, route }: Props): React.ReactElement {
                     const generateMediaCaptions = httpsCallable(getFunctions(), 'generateMediaCaptions')
                     const result = await generateMediaCaptions({
                         path: storagePath,
-                        type: type
+                        type: type,
+                        prompt: captionsPrompt(type)
                     });
-                    console.log(result.data);
+                    updateMedia({
+                        path: path,
+                        type: type,
+                        captions: JSON.parse(result.data as string).captions as { type: string, caption: string }[]
+                    });
+                    navigation.navigate('CaptionsPage');
                 } catch (error) {
                     console.error(error)
                 }
@@ -176,15 +184,19 @@ export function MediaPage({ navigation, route }: Props): React.ReactElement {
                 <IonIcon name="close" size={35} color="white" style={styles.icon} />
             </CloseButton>
 
-            <SaveButton onPress={onSavePressed} disabled={savingState !== 'none'}>
-                {savingState === 'none' && <IonIcon name="download" size={35} color="white" style={styles.icon} />}
-                {savingState === 'saved' && <IonIcon name="checkmark" size={35} color="white" style={styles.icon} />}
-                {savingState === 'saving' && <ActivityIndicator color="white" />}
-            </SaveButton>
+            <DownloadButtons>
+                <IconButton onPress={onSavePressed} disabled={savingState !== 'none'}>
+                    {savingState === 'none' && <IonIcon name="download" size={35} color="white" style={styles.icon} />}
+                    {savingState === 'saved' && <IonIcon name="checkmark" size={35} color="white" style={styles.icon} />}
+                    {savingState === 'saving' && <ActivityIndicator color="white" />}
+                </IconButton>
+            </DownloadButtons>
 
-            <UploadButton onPress={uploadMedia}>
-                <IonIcon name="cloud-upload" size={35} color="white" style={styles.icon} />
-            </UploadButton>
+            <UploadButtons>
+                <IconButton onPress={uploadMedia}>
+                    <IonIcon name="logo-closed-captioning" size={35} color="white" style={styles.icon} />
+                </IconButton>
+            </UploadButtons>
 
             <StatusBarBlurBackground />
         </MediaPageView>

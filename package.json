@@ -37,7 +37,8 @@
     "react-native-vision-camera": "^4.5.0",
     "styled-components": "^6.1.12",
     "zustand": "^4.5.4",
-    "expo-constants": "~16.0.2"
+    "expo-constants": "~16.0.2",
+    "expo-clipboard": "~6.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

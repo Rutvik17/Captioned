@@ -62,7 +62,7 @@ async function waitForFilesActive(files) {
     console.log("...all files ready\n");
 }
 
-async function uploadAndProcessImage(mediaUrl, prompt) {
+async function uploadAndProcessMedia(mediaUrl, prompt) {
     try {
         const [metadata] = await getStorage().bucket().file(mediaUrl).getMetadata();
 
@@ -101,9 +101,7 @@ async function uploadAndProcessImage(mediaUrl, prompt) {
     
         fs.unlinkSync(tempFilePath);
 
-        console.log(result.response.text())
-    
-        return result.response.text();
+        return result.response.text()
     } catch (error) {
         console.error('Error processing media:', error);
     }
@@ -112,39 +110,12 @@ async function uploadAndProcessImage(mediaUrl, prompt) {
 exports.generateMediaCaptions = functions.https.onCall(async (data, context) => {
     try {
         const mediaUrl = data.path;
-        const type = data.type;
-        const prompt = `
-            Please generate three different types of captions for the given ${type === 'photo' ? 'image' : 'video'}. Each caption should include relevant emojis and hashtags. The captions should be based on the content of the ${type === 'photo' ? 'image' : 'video'}. The response should be in JSON format, with an array of captions.
-
-            1. Minimalist Caption: A short and concise caption.
-            2. Short Sentence Caption: A brief sentence describing the ${type === 'photo' ? 'image' : 'video'}.
-            3. Detailed Caption: A more descriptive and detailed caption.
-
-            Format:
-            {
-                "captions": [
-                {
-                    "type": "minimalist",
-                    "caption": "<caption_with_emojis_and_hashtags>"
-                },
-                {
-                    "type": "short_sentence",
-                    "caption": "<caption_with_emojis_and_hashtags>"
-                },
-                {
-                    "type": "detailed",
-                    "caption": "<caption_with_emojis_and_hashtags>"
-                }
-                ]
-            }
-
-            Please use the provided format.
-        `;
+        const prompt = data.prompt;
     if (!mediaUrl || !prompt) {
         throw new Error('Media URL and prompt must be provided');
     }
-        const response = await uploadAndProcessImage(mediaUrl, prompt);
-        return response;
+    
+    return await uploadAndProcessMedia(mediaUrl, prompt);
     } catch (error) {
         console.error('Error in function:', error);
         throw new functions.https.HttpsError('internal', 'Error processing media');
