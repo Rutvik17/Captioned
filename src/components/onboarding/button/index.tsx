@@ -88,7 +88,7 @@ const OnboardingButton = ({ handlePress, buttonVal }: Props) => {
         <TouchableWithoutFeedback onPress={handlePress}>
             <OnboardingButtonView style={[animatedColor, buttonAnimationStyle]}>
                 <AnimatedText style={[textAnimationStyle]}>Get Started</AnimatedText>
-                <Animated.Image source={require('../../../../assets/arrow-icon.png')}
+                <Animated.Image source={require('../../../../assets/images/arrow-icon.png')}
                     style={arrowAnimationStyle} />
             </OnboardingButtonView>
         </TouchableWithoutFeedback>

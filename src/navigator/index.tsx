@@ -6,7 +6,6 @@ import OnboardingPage from '../components/onboarding';
 import PermissionsPage from '../components/camera/permissions';
 import { Camera } from 'react-native-vision-camera';
 import * as SecureStore from 'expo-secure-store';
-import * as SplashScreen from 'expo-splash-screen';
 import { MediaPage } from '../components/media';
 import CameraPage from '../components/camera';
 import CaptionsPage from '../components/captions';
@@ -43,7 +42,6 @@ const RootNavigator = () => {
                 setOnboardingComplete(true);
             }
             setLoading(false);
-            await SplashScreen.hideAsync();
         })();
     }, [])
 

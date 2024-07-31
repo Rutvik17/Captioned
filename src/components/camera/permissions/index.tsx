@@ -8,8 +8,9 @@ import FastImage from 'react-native-fast-image'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../../../navigator'
+import * as SplashScreen from 'expo-splash-screen';
 
-const BANNER_IMAGE = require('../../../../assets/images/camera.png') as ImageRequireSource
+const BANNER_IMAGE = require('../../../../assets/images/camera.gif') as ImageRequireSource
 
 const StyledPermissionsPage = styled.View`
     flex: 1;
@@ -78,7 +79,7 @@ const PermissionsPage = ({ setShowPermissionsPage }: Props): React.ReactElement 
     }, [cameraPermissionStatus, microphonePermissionStatus, setShowPermissionsPage])
 
     return (
-        <StyledPermissionsPage>
+        <StyledPermissionsPage onLayout={() => SplashScreen.hideAsync()}>
             <StyledBanner source={BANNER_IMAGE} resizeMode='contain' />
             <StyledText>
                 Please grant Captioned permissions to following

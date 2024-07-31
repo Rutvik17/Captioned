@@ -12,6 +12,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { OnboardingStackParamList } from '../../navigator';
 import * as SecureStore from 'expo-secure-store';
 import { Camera } from 'react-native-vision-camera';
+import * as SplashScreen from 'expo-splash-screen';
 
 const OnboardingView = styled.View`
     flex: 1;
@@ -72,7 +73,7 @@ const OnboardingPage = ({ setOnboardingComplete }: Props) => {
     }
 
     return (
-        <OnboardingView>
+        <OnboardingView onLayout={() => SplashScreen.hideAsync()}>
             <View ref={ref} collapsable={false}>
                 {onboardingData.map((item, index) => {
                     return (
