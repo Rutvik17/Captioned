@@ -1,8 +1,11 @@
 export const captionsPrompt = (type: string) => 
-    `Please generate three different types of captions for the given ${type === 'photo' ? 'image' : 'video'}. Each caption should include relevant emojis and hashtags. The captions should be based on the content of the ${type === 'photo' ? 'image' : 'video'}. The response should be in JSON format, with an array of captions.
+    `Please generate three different types of texts for the given ${type === 'photo' ? 'image' : 'video'}. 
+        The first should be a minimalist caption and should include relevant emojis and hashtags. 
+        The other two should be tweets based on the content of the ${type === 'photo' ? 'image' : 'video'}. 
+        The response should be in JSON format provided below.
         1. Minimalist Caption: A short and concise caption.
-        2. Short Sentence Caption: A brief sentence describing the ${type === 'photo' ? 'image' : 'video'}.
-        3. Detailed Caption: A more descriptive and detailed caption.
+        2. Short Sentence Tweet: A brief sentence describing the ${type === 'photo' ? 'image' : 'video'}.
+        3. Detailed Tweet: A more descriptive and detailed tweet.
         Format:
         {
             "captions": [
@@ -12,11 +15,11 @@ export const captionsPrompt = (type: string) =>
             },
             {
                 "type": "short_sentence",
-                "caption": "<caption_with_emojis_and_hashtags>"
+                "caption": "<tweet_with_emojis_and_hashtags>"
             },
             {
                 "type": "detailed",
-                "caption": "<caption_with_emojis_and_hashtags>"
+                "caption": "<tweet_with_emojis_and_hashtags>"
             }
             ]
         }

@@ -277,10 +277,6 @@ const CaptionsPage = () => {
                 <IconButton onPress={() => { }}>
                     <IonIcon name="logo-twitter" size={35} color="white" style={styles.icon} />
                 </IconButton>
-
-                <IconButton onPress={() => { }}>
-                    <IonIcon name="logo-reddit" size={35} color="white" style={styles.icon} />
-                </IconButton>
             </UploadButtons>
         </RootView>
     );
