@@ -3,6 +3,7 @@ export default {
         name: "Captioned",
         slug: "captioned",
         version: "1.0.0",
+        scheme: "com.rutvik.dev.Captioned",
         orientation: "portrait",
         icon: "./assets/icon.png",
         userInterfaceStyle: "light",
@@ -57,6 +58,10 @@ export default {
                 appId: process.env.FIREBASE_APP_ID,
                 measurementId: process.env.FIREBASE_MEASUREMENT_ID,
                 databaseUrl: process.env.FIREBASE_DATABASE_URL
+            },
+            x: {
+                clientId: process.env.X_CLIENT_ID,
+                clientSecret: process.env.X_CLIENT_SECRET
             }
         }
     }

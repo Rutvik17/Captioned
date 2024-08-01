@@ -11,6 +11,7 @@ import CameraPage from '../components/camera';
 import CaptionsPage from '../components/captions';
 
 export type RootStackParamList = {
+    PermissionsPage: undefined;
     CameraPage: undefined;
     MediaPage: {
         path: string
@@ -21,7 +22,6 @@ export type RootStackParamList = {
 
 export type OnboardingStackParamList = {
     OnboardingPage: undefined;
-    PermissionsPage: undefined;
 };
 
 const StyledGestureHandlerRootView = styled(GestureHandlerRootView)`flex: 1`;
@@ -29,11 +29,6 @@ const StyledGestureHandlerRootView = styled(GestureHandlerRootView)`flex: 1`;
 const RootNavigator = () => {
     const [onboardingComplete, setOnboardingComplete] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
-
-    const cameraPermission = Camera.getCameraPermissionStatus();
-    const microphonePermission = Camera.getMicrophonePermissionStatus();
-
-    const [showPermissionsPage, setShowPermissionsPage] = useState(cameraPermission !== 'granted' || microphonePermission === 'not-determined');
 
     useEffect(() => {
         (async () => {
@@ -48,20 +43,8 @@ const RootNavigator = () => {
     if (loading) return;
 
     if (!onboardingComplete) {
-        return <OnboardingNavigator
-            initialRouteName={'OnboardingPage'}
-            setShowPermissionsPage={setShowPermissionsPage}
-            setOnboardingComplete={setOnboardingComplete}
-        />
+        return <OnboardingNavigator />
     };
-
-    if (showPermissionsPage) {
-        return <OnboardingNavigator
-            initialRouteName={'PermissionsPage'}
-            setShowPermissionsPage={setShowPermissionsPage}
-            setOnboardingComplete={setOnboardingComplete}
-        />
-    }
 
     return (
         <HomeNavigator />
@@ -71,23 +54,40 @@ const RootNavigator = () => {
 const HomeNavigator = () => {
     const Stack = createNativeStackNavigator<RootStackParamList>();
 
+    const cameraPermission = Camera.getCameraPermissionStatus();
+    const microphonePermission = Camera.getMicrophonePermissionStatus();
+
+    const showPermissionsPage = cameraPermission !== 'granted' || microphonePermission === 'not-determined';
+
     return (
         <StyledGestureHandlerRootView>
             <Stack.Navigator
-                initialRouteName={'CameraPage'}
+                initialRouteName={showPermissionsPage ? 'PermissionsPage' : 'CameraPage'}
                 screenOptions={{
                     headerShown: false,
                     animationTypeForReplace: 'pop',
                 }}
             >
                 <Stack.Screen
+                    name="PermissionsPage"
+                    component={PermissionsPage}
+                    options={{
+                        presentation: 'modal',
+                        gestureEnabled: false
+                    }}
+                />
+                <Stack.Screen
                     name="CameraPage"
                     component={CameraPage}
+                    options={{
+                        gestureEnabled: false,
+                    }}
                 />
                 <Stack.Screen
                     name="MediaPage"
                     component={MediaPage}
                     options={{
+                        presentation: 'modal',
                         gestureEnabled: false
                     }}
                 />
@@ -104,30 +104,19 @@ const HomeNavigator = () => {
     )
 };
 
-type OnboardingNavigatorProps = {
-    initialRouteName: keyof OnboardingStackParamList;
-    setShowPermissionsPage: React.Dispatch<React.SetStateAction<boolean>>;
-    setOnboardingComplete: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const OnboardingNavigator = ({ initialRouteName, setShowPermissionsPage, setOnboardingComplete }: OnboardingNavigatorProps) => {
+const OnboardingNavigator = () => {
     const Stack = createNativeStackNavigator<OnboardingStackParamList>();
 
     return (
         <StyledGestureHandlerRootView>
             <Stack.Navigator
-                initialRouteName={initialRouteName}
+                initialRouteName={'OnboardingPage'}
                 screenOptions={{
                     headerShown: false,
                     animationTypeForReplace: 'push',
                 }}
             >
-                <Stack.Screen name="OnboardingPage">
-                    {(props) => <OnboardingPage {...props} setOnboardingComplete={setOnboardingComplete} />}
-                </Stack.Screen>
-                <Stack.Screen name="PermissionsPage" >
-                    {(props) => <PermissionsPage {...props} setShowPermissionsPage={setShowPermissionsPage} />}
-                </Stack.Screen>
+                <Stack.Screen name="OnboardingPage" component={OnboardingPage} />
             </Stack.Navigator>
         </StyledGestureHandlerRootView>
     );

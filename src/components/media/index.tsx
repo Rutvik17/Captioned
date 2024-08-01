@@ -135,46 +135,50 @@ export function MediaPage({ navigation, route }: Props): React.ReactElement {
     }, [path, type])
 
     const uploadMedia = useCallback(async () => {
-        const filename = path.substring(path.lastIndexOf('/') + 1);
-        const storagePath = type === 'photo' ? `images/${filename}` : `videos/${filename}`;
-        const storage = getStorage();
-        const storageRef = ref(storage, storagePath);
-        const response = await fetch(path);
-        const uploadTask = uploadBytesResumable(storageRef, await response.blob());
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                // Handle progress
-                setUploadingMedia(true);
-                progressBarX.value = withTiming((snapshot.bytesTransferred / snapshot.totalBytes) * SCREEN_WIDTH, { duration: 500 });
-            },
-            (error) => {
-                // Handle error
-                console.log(error)
-            },
-            async () => {
-                setTimeout(() => {
-                    setUploadingMedia(false);
-                }, 500)
-                try {
-                    setGeneratingCaption(true);
-                    const generateMediaCaptions = httpsCallable(getFunctions(), 'generateMediaCaptions')
-                    const result = await generateMediaCaptions({
-                        path: storagePath,
-                        type: type,
-                        prompt: captionsPrompt(type)
-                    });
-                    setGeneratingCaption(false);
-                    updateMedia({
-                        path: path,
-                        type: type,
-                        captions: JSON.parse(result.data as string).captions as { type: string, caption: string }[]
-                    });
-                    navigation.navigate('CaptionsPage');
-                } catch (error) {
-                    console.error(error)
+        try {
+            const filename = path.substring(path.lastIndexOf('/') + 1);
+            const storagePath = type === 'photo' ? `images/${filename}` : `videos/${filename}`;
+            const storage = getStorage();
+            const storageRef = ref(storage, storagePath);
+            const response = await fetch(Platform.OS === 'android' ? `file://${path}` : path);
+            const uploadTask = uploadBytesResumable(storageRef, await response.blob());
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    // Handle progress
+                    setUploadingMedia(true);
+                    progressBarX.value = withTiming((snapshot.bytesTransferred / snapshot.totalBytes) * SCREEN_WIDTH, { duration: 500 });
+                },
+                (error) => {
+                    // Handle error
+                    console.log(error)
+                },
+                async () => {
+                    setTimeout(() => {
+                        setUploadingMedia(false);
+                    }, 500)
+                    try {
+                        setGeneratingCaption(true);
+                        const generateMediaCaptions = httpsCallable(getFunctions(), 'generateMediaCaptions')
+                        const result = await generateMediaCaptions({
+                            path: storagePath,
+                            type: type,
+                            prompt: captionsPrompt(type)
+                        });
+                        setGeneratingCaption(false);
+                        updateMedia({
+                            path: path,
+                            type: type,
+                            captions: JSON.parse(result.data as string).captions as { type: string, caption: string }[]
+                        });
+                        navigation.navigate('CaptionsPage');
+                    } catch (error) {
+                        console.error(error)
+                    }
                 }
-            }
-        );
+            );
+        } catch (error) {
+            console.log(error, `failed to upload media file ${path}`)
+        }
     }, [])
 
     const source = useMemo(() => ({ uri: `file://${path}` }), [path])

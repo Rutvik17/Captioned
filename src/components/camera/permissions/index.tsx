@@ -1,26 +1,20 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import type { ImageRequireSource } from 'react-native'
 import { Linking } from 'react-native'
 import type { CameraPermissionStatus } from 'react-native-vision-camera'
 import { Camera } from 'react-native-vision-camera'
 import styled from 'styled-components/native'
-import FastImage from 'react-native-fast-image'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../../../navigator'
 import * as SplashScreen from 'expo-splash-screen';
+import LottieView from 'lottie-react-native';
 
-const BANNER_IMAGE = require('../../../../assets/images/camera.gif') as ImageRequireSource
+const BANNER_IMAGE = require('../../../../assets/images/camera.json');
 
 const StyledPermissionsPage = styled.View`
     flex: 1;
     align-items: center;
     background-color: #7899D4;
-`;
-
-const StyledBanner = styled(FastImage)`
-    width: 250px;
-    height: 350px;
 `;
 
 const StyledButton = styled.TouchableOpacity`
@@ -45,11 +39,7 @@ const StyledText = styled.Text`
     font-style: italic;
 `;
 
-type Props = {
-    setShowPermissionsPage: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const PermissionsPage = ({ setShowPermissionsPage }: Props): React.ReactElement => {
+const PermissionsPage = (): React.ReactElement => {
     const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const [cameraPermissionStatus, setCameraPermissionStatus] = useState<CameraPermissionStatus>('not-determined')
     const [microphonePermissionStatus, setMicrophonePermissionStatus] = useState<CameraPermissionStatus>('not-determined')
@@ -74,13 +64,20 @@ const PermissionsPage = ({ setShowPermissionsPage }: Props): React.ReactElement 
 
     useEffect(() => {
         if (cameraPermissionStatus === 'granted' && microphonePermissionStatus === 'granted') {
-            setShowPermissionsPage(false);
+            navigation.navigate('CameraPage');
         }
-    }, [cameraPermissionStatus, microphonePermissionStatus, setShowPermissionsPage])
+    }, [cameraPermissionStatus, microphonePermissionStatus, navigation])
 
     return (
         <StyledPermissionsPage onLayout={() => SplashScreen.hideAsync()}>
-            <StyledBanner source={BANNER_IMAGE} resizeMode='contain' />
+            <LottieView
+                autoPlay
+                style={{
+                    width: 250,
+                    height: 250,
+                }}
+                source={BANNER_IMAGE}
+            />
             <StyledText>
                 Please grant Captioned permissions to following
             </StyledText>

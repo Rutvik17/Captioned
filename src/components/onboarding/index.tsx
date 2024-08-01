@@ -19,11 +19,7 @@ const OnboardingView = styled.View`
     align-items: center;
 `;
 
-type Props = {
-    setOnboardingComplete: React.Dispatch<React.SetStateAction<boolean>>;
-};
-
-const OnboardingPage = ({ setOnboardingComplete }: Props) => {
+const OnboardingPage = () => {
     const pd = PixelRatio.get();
     const navigation = useNavigation<NativeStackNavigationProp<OnboardingStackParamList>>();
 
@@ -47,11 +43,6 @@ const OnboardingPage = ({ setOnboardingComplete }: Props) => {
     const handlePress = async () => {
         if (currentIndex === onboardingData.length - 1 && !active) {
             await SecureStore.setItemAsync('onboarding', 'complete');
-            if (permissionsRequired) {
-                navigation.navigate('PermissionsPage');
-            } else {
-                setOnboardingComplete(true);
-            }
             return;
         }
 

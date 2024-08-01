@@ -2,7 +2,7 @@ import React from "react";
 import { useWindowDimensions } from "react-native";
 import styled from "styled-components/native";
 import { OnboardingData } from "../data";
-import FastImage from "react-native-fast-image";
+import LottieView from 'lottie-react-native';
 
 type Props = {
     item: OnboardingData;
@@ -28,11 +28,6 @@ const StyledText = styled.Text<{ color: string }>`
     color: ${props => props.color};
 `;
 
-const StyledImage = styled(FastImage)`
-    width: 250px;
-    height: 350px;
-`;
-
 const RenderOnboardingPage = ({ item }: Props) => {
     const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
 
@@ -41,7 +36,14 @@ const RenderOnboardingPage = ({ item }: Props) => {
             height={SCREEN_HEIGHT}
             bgColor={item.backgroundColor}
         >
-            <StyledImage source={item.image} resizeMode="contain" />
+            <LottieView
+                autoPlay
+                style={{
+                    width: 250,
+                    height: 250,
+                }}
+                source={item.image}
+            />
             <StyledText color={item.textColor}>
                 {item.text}
             </StyledText>

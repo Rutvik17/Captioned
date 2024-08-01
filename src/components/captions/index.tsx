@@ -1,6 +1,6 @@
 import React, { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components/native';
-import { View, Animated, ScrollView, StyleSheet, Alert } from 'react-native';
+import { View, Animated, ScrollView, StyleSheet, Alert, Platform } from 'react-native';
 import { SAFE_AREA_PADDING, SCREEN_HEIGHT, SCREEN_WIDTH } from '../camera/constants';
 import { PressableOpacity } from 'react-native-pressable-opacity';
 import { FlatList } from 'react-native-gesture-handler';
@@ -94,7 +94,7 @@ const Header = styled.View`
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    top: ${SAFE_AREA_PADDING.paddingTop}px;
+    top: ${Platform.OS === 'android' ? '60' : SAFE_AREA_PADDING.paddingTop}px;
 `;
 
 const Title = styled.Text`
@@ -109,7 +109,7 @@ const CloseButton = styled(PressableOpacity)`
     position: absolute;
     align-items: center;
     justify-content: center;
-    top: ${SAFE_AREA_PADDING.paddingTop}px;
+    top: ${Platform.OS === 'android' ? '60' : SAFE_AREA_PADDING.paddingTop}px;
     left: ${SAFE_AREA_PADDING.paddingLeft}px;
 `;
 
@@ -128,18 +128,21 @@ const Tab = forwardRef<View, { item: DataItem, len: number }>((props, ref) => {
 
 const Indicator = ({ measures, scrollX, data }:
     {
-        measures: {}[],
+        measures: { x: number, y: number, width: number, height: number }[],
         scrollX: Animated.Value,
         data: DataItem[]
     }) => {
 
+    const widthOutputRange = measures.map((r) => r.width);
+    const xOutputRange = measures.map((r) => r.x);
+
     const indicatorWidth = scrollX.interpolate({
         inputRange: [0, SCREEN_WIDTH, 2 * SCREEN_WIDTH],
-        outputRange: [88.66666412353516, 134, 70.66665649414062]
+        outputRange: widthOutputRange
     })
     const translateX = scrollX.interpolate({
         inputRange: [0, SCREEN_WIDTH, 2 * SCREEN_WIDTH],
-        outputRange: [24.33333396911621, 137, 295]
+        outputRange: xOutputRange
     })
     return <IndicatorView style={[
         {
@@ -153,11 +156,11 @@ const Indicator = ({ measures, scrollX, data }:
 }
 
 const Tabs = ({ scrollX, data, onItemPress }: { scrollX: Animated.Value, data: DataItem[], onItemPress: (itemIndex: number) => void }) => {
-    const [measures, setMeasures] = useState([{}]);
+    const [measures, setMeasures] = useState<{ x: number, y: number, width: number, height: number }[]>([]);
     const containerRef = useRef<View>(null);
 
     useEffect(() => {
-        const measurements: Array<{}> = [];
+        const measurements: Array<{ x: number, y: number, width: number, height: number }> = [];
         data.forEach(item => {
             if (item.ref.current) {
                 item.ref.current.measureLayout(
@@ -233,11 +236,9 @@ const CaptionsPage = () => {
                 <IonIcon name="close" size={35} color="white" style={styles.icon} />
             </CloseButton>
             <Header>
-                {/* <View style={{ width: 80, height: 40 }} /> */}
                 <Title>
                     CAPTIONS
                 </Title>
-                {/* <View style={{ width: 80, height: 40 }} /> */}
             </Header>
 
             <RootFlatList
