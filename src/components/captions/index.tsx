@@ -133,16 +133,13 @@ const Indicator = ({ measures, scrollX, data }:
         data: DataItem[]
     }) => {
 
-    const widthOutputRange = measures.map((r) => r.width);
-    const xOutputRange = measures.map((r) => r.x);
-
     const indicatorWidth = scrollX.interpolate({
         inputRange: [0, SCREEN_WIDTH, 2 * SCREEN_WIDTH],
-        outputRange: widthOutputRange
+        outputRange: [88.66666412353516, 134, 70]
     })
     const translateX = scrollX.interpolate({
         inputRange: [0, SCREEN_WIDTH, 2 * SCREEN_WIDTH],
-        outputRange: xOutputRange
+        outputRange: [24.33333396911621, 134, 295]
     })
     return <IndicatorView style={[
         {
@@ -161,7 +158,7 @@ const Tabs = ({ scrollX, data, onItemPress }: { scrollX: Animated.Value, data: D
 
     useEffect(() => {
         const measurements: Array<{ x: number, y: number, width: number, height: number }> = [];
-        data.forEach(item => {
+        data.forEach((item, index) => {
             if (item.ref.current) {
                 item.ref.current.measureLayout(
                     containerRef.current as View,
@@ -273,10 +270,6 @@ const CaptionsPage = () => {
             <UploadButtons>
                 <IconButton onPress={copyToClipboard}>
                     <IonIcon name="copy" size={35} color="white" style={styles.icon} />
-                </IconButton>
-
-                <IconButton onPress={() => { }}>
-                    <IonIcon name="logo-twitter" size={35} color="white" style={styles.icon} />
                 </IconButton>
             </UploadButtons>
         </RootView>

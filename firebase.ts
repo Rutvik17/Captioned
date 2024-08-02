@@ -1,4 +1,5 @@
 import Constants from 'expo-constants';
+import { initializeApp } from 'firebase/app';
 
 const firebaseConfig = {
     apiKey: Constants.expoConfig?.extra?.firebase.apiKey,
@@ -11,4 +12,4 @@ const firebaseConfig = {
     measurementId: Constants.expoConfig?.extra?.firebase.measurementId,
 };
 
-export default firebaseConfig;
+const app = initializeApp(firebaseConfig);

@@ -26,7 +26,6 @@ import { usePreferredCameraDevice } from './hooks/usePreferredCameraDevice'
 import { useIsForeground } from './hooks/useIsForeground'
 import styled from 'styled-components/native'
 import { useNavigation } from '@react-navigation/native'
-import * as SplashScreen from 'expo-splash-screen';
 
 const ReanimatedCamera = Reanimated.createAnimatedComponent(Camera)
 Reanimated.addWhitelistedNativeProps({
@@ -217,10 +216,7 @@ const CameraPage = (): React.ReactElement => {
                                 ref={camera}
                                 onInitialized={onInitialized}
                                 onError={onError}
-                                onStarted={() => {
-                                    console.log('Camera started!')
-                                    SplashScreen.hideAsync()
-                                }}
+                                onStarted={() => { console.log('Camera started!') }}
                                 onStopped={() => console.log('Camera stopped!')}
                                 onPreviewStarted={() => console.log('Preview started!')}
                                 onPreviewStopped={() => console.log('Preview stopped!')}

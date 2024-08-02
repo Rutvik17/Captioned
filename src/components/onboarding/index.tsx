@@ -7,12 +7,10 @@ import { onboardingData } from './data';
 import OnboardingButton from './button';
 import Pagination from './pagination';
 import RenderOnboardingPage from './renderPage';
+import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { OnboardingStackParamList } from '../../navigator';
-import * as SecureStore from 'expo-secure-store';
-import { Camera } from 'react-native-vision-camera';
-import * as SplashScreen from 'expo-splash-screen';
+import { RootStackParamList } from '../../navigator';
 
 const OnboardingView = styled.View`
     flex: 1;
@@ -20,14 +18,8 @@ const OnboardingView = styled.View`
 `;
 
 const OnboardingPage = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
     const pd = PixelRatio.get();
-    const navigation = useNavigation<NativeStackNavigationProp<OnboardingStackParamList>>();
-
-    const cameraPermission = Camera.getCameraPermissionStatus();
-    const microphonePermission = Camera.getMicrophonePermissionStatus();
-
-    const permissionsRequired = cameraPermission !== 'granted' || microphonePermission === 'not-determined';
-
     const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
     const ref = useRef(null);
     const [active, setActive] = useState(false);
@@ -43,7 +35,7 @@ const OnboardingPage = () => {
     const handlePress = async () => {
         if (currentIndex === onboardingData.length - 1 && !active) {
             await SecureStore.setItemAsync('onboarding', 'complete');
-            return;
+            return navigation.navigate('PermissionsPage');
         }
 
         if (!active) {
@@ -64,7 +56,7 @@ const OnboardingPage = () => {
     }
 
     return (
-        <OnboardingView onLayout={() => SplashScreen.hideAsync()}>
+        <OnboardingView>
             <View ref={ref} collapsable={false}>
                 {onboardingData.map((item, index) => {
                     return (

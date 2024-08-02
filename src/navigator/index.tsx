@@ -9,8 +9,12 @@ import * as SecureStore from 'expo-secure-store';
 import { MediaPage } from '../components/media';
 import CameraPage from '../components/camera';
 import CaptionsPage from '../components/captions';
+import * as SplashScreen from 'expo-splash-screen';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import useCaptionedStore from '../store';
 
 export type RootStackParamList = {
+    OnboardingPage: undefined;
     PermissionsPage: undefined;
     CameraPage: undefined;
     MediaPage: {
@@ -27,8 +31,15 @@ export type OnboardingStackParamList = {
 const StyledGestureHandlerRootView = styled(GestureHandlerRootView)`flex: 1`;
 
 const RootNavigator = () => {
+    const Stack = createNativeStackNavigator<RootStackParamList>();
+    const Tab = createBottomTabNavigator();
     const [onboardingComplete, setOnboardingComplete] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
+    const cameraPermission = Camera.getCameraPermissionStatus();
+    const microphonePermission = Camera.getMicrophonePermissionStatus();
+    const { stack } = useCaptionedStore();
+
+    const showPermissionsPage = cameraPermission !== 'granted' || microphonePermission === 'not-determined';
 
     useEffect(() => {
         (async () => {
@@ -42,40 +53,42 @@ const RootNavigator = () => {
 
     if (loading) return;
 
-    if (!onboardingComplete) {
-        return <OnboardingNavigator />
+    const OnboardingStack = () => {
+        return (
+            <StyledGestureHandlerRootView onLayout={() => SplashScreen.hideAsync()}>
+                <Stack.Navigator
+                    initialRouteName={!onboardingComplete ? 'OnboardingPage' : 'PermissionsPage'}
+                    screenOptions={{
+                        headerShown: false,
+                        animationTypeForReplace: 'pop',
+                    }}
+                >
+                    <Stack.Screen name="OnboardingPage" component={OnboardingPage} />
+                    <Stack.Screen
+                        name="PermissionsPage"
+                        component={PermissionsPage}
+                        options={{
+                            gestureEnabled: false
+                        }}
+                    />
+                </Stack.Navigator>
+            </StyledGestureHandlerRootView>
+        )
     };
 
-    return (
-        <HomeNavigator />
-    );
-};
+    if ((!onboardingComplete || showPermissionsPage) && stack === 'onboarding') {
+        return <OnboardingStack />
+    }
 
-const HomeNavigator = () => {
-    const Stack = createNativeStackNavigator<RootStackParamList>();
-
-    const cameraPermission = Camera.getCameraPermissionStatus();
-    const microphonePermission = Camera.getMicrophonePermissionStatus();
-
-    const showPermissionsPage = cameraPermission !== 'granted' || microphonePermission === 'not-determined';
-
-    return (
-        <StyledGestureHandlerRootView>
+    const CameraStack = () => {
+        return (
             <Stack.Navigator
-                initialRouteName={showPermissionsPage ? 'PermissionsPage' : 'CameraPage'}
+                initialRouteName={'CameraPage'}
                 screenOptions={{
                     headerShown: false,
                     animationTypeForReplace: 'pop',
                 }}
             >
-                <Stack.Screen
-                    name="PermissionsPage"
-                    component={PermissionsPage}
-                    options={{
-                        presentation: 'modal',
-                        gestureEnabled: false
-                    }}
-                />
                 <Stack.Screen
                     name="CameraPage"
                     component={CameraPage}
@@ -87,7 +100,6 @@ const HomeNavigator = () => {
                     name="MediaPage"
                     component={MediaPage}
                     options={{
-                        presentation: 'modal',
                         gestureEnabled: false
                     }}
                 />
@@ -100,26 +112,25 @@ const HomeNavigator = () => {
                     }}
                 />
             </Stack.Navigator>
-        </StyledGestureHandlerRootView>
-    )
-};
-
-const OnboardingNavigator = () => {
-    const Stack = createNativeStackNavigator<OnboardingStackParamList>();
+        )
+    }
 
     return (
-        <StyledGestureHandlerRootView>
-            <Stack.Navigator
-                initialRouteName={'OnboardingPage'}
-                screenOptions={{
-                    headerShown: false,
-                    animationTypeForReplace: 'push',
-                }}
-            >
-                <Stack.Screen name="OnboardingPage" component={OnboardingPage} />
-            </Stack.Navigator>
+        <StyledGestureHandlerRootView onLayout={() => SplashScreen.hideAsync()}>
+            <Tab.Navigator>
+                <Tab.Screen
+                    name="Feed"
+                    component={CameraStack}
+                    options={{ headerShown: false }}
+                />
+                <Tab.Screen
+                    name="Camera"
+                    options={{ headerShown: false }}
+                    component={CameraStack}
+                />
+            </Tab.Navigator>
         </StyledGestureHandlerRootView>
-    );
+    )
 };
 
 export default RootNavigator;

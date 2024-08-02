@@ -69,7 +69,7 @@ const IconButton = styled(PressableOpacity)`
 const UploadingBar = styled(Animated.View)`
     height: 5px;
     z-index: 1;
-    background: #1D355D;
+    background: #3B69BA;
     width: ${SCREEN_WIDTH}px;
     top: ${SAFE_AREA_PADDING.paddingTop - 15}px;
 `;
@@ -94,6 +94,7 @@ export function MediaPage({ navigation, route }: Props): React.ReactElement {
     const [savingState, setSavingState] = useState<'none' | 'saving' | 'saved'>('none')
     const [uploadingMedia, setUploadingMedia] = useState(false);
     const [generatingCaption, setGeneratingCaption] = useState(false);
+    const [writingDb, setWritingDb] = useState(false);
     const progressBarX = useSharedValue(0);
 
     const onMediaLoad = useCallback((event: OnLoadData | OnLoadImage) => {
@@ -165,11 +166,21 @@ export function MediaPage({ navigation, route }: Props): React.ReactElement {
                             prompt: captionsPrompt(type)
                         });
                         setGeneratingCaption(false);
+                        setWritingDb(true);
+                        // @ts-ignore
+                        const content = JSON.parse(result.data.content as string).captions as { type: string, caption: string }[];
+                        const writeDb = httpsCallable(getFunctions(), 'writeDb');
+                        await writeDb({
+                            // @ts-ignore
+                            mediaUrl: result.data.publicUrl,
+                            content: content
+                        });
                         updateMedia({
                             path: path,
                             type: type,
-                            captions: JSON.parse(result.data as string).captions as { type: string, caption: string }[]
+                            captions: content
                         });
+                        setWritingDb(false);
                         navigation.navigate('CaptionsPage');
                     } catch (error) {
                         console.error(error)
@@ -215,9 +226,9 @@ export function MediaPage({ navigation, route }: Props): React.ReactElement {
                     onError={onMediaLoadError}
                 />
             )}
-            {generatingCaption &&
+            {(generatingCaption || writingDb) &&
                 <GeneratingCaptionText>
-                    Generating caption...
+                    {generatingCaption ? 'Generating caption...' : 'Writing Db...'}
                 </GeneratingCaptionText>
             }
             <CloseButton onPress={navigation.goBack}>

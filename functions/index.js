@@ -16,7 +16,8 @@ const fileManager = new GoogleAIFileManager(apiKey);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: process.env.MY_FIREBASE_STORAGE_BUCKET
+  storageBucket: process.env.MY_FIREBASE_STORAGE_BUCKET,
+  databaseURL: process.env.MY_FIREBASE_DATABASE_URL,
 });
 
 const model = genAI.getGenerativeModel({
@@ -27,6 +28,10 @@ function getStorage() {
     return admin.storage();
 }
 
+function getDatabase() {
+    return admin.database();
+}
+
 const generationConfig = {
     temperature: 0.9,
     topP: 0.95,
@@ -34,7 +39,6 @@ const generationConfig = {
     maxOutputTokens: 1024,
     responseMimeType: "application/json",
 };
-
 
 async function uploadToGemini(path, mimeType) {
     const uploadResult = await fileManager.uploadFile(path, {
@@ -60,6 +64,12 @@ async function waitForFilesActive(files) {
         }
     }
     console.log("...all files ready\n");
+}
+
+async function makeFilePublic(mediaUrl) {
+    await getStorage().bucket().file(mediaUrl).makePublic();
+    const publicUrl = `https://storage.googleapis.com/${getStorage().bucket().name}/${mediaUrl}`;
+    return publicUrl;
 }
 
 async function uploadAndProcessMedia(mediaUrl, prompt) {
@@ -101,7 +111,9 @@ async function uploadAndProcessMedia(mediaUrl, prompt) {
     
         fs.unlinkSync(tempFilePath);
 
-        return result.response.text()
+        const publicUrl = await makeFilePublic(mediaUrl);
+
+        return { content: result.response.text(), publicUrl: publicUrl };
     } catch (error) {
         console.error('Error processing media:', error);
     }
@@ -111,14 +123,37 @@ exports.generateMediaCaptions = functions.https.onCall(async (data, context) => 
     try {
         const mediaUrl = data.path;
         const prompt = data.prompt;
-    if (!mediaUrl || !prompt) {
-        throw new Error('Media URL and prompt must be provided');
-    }
-    
-    return await uploadAndProcessMedia(mediaUrl, prompt);
+        if (!mediaUrl || !prompt) {
+            throw new Error('Media URL and prompt must be provided');
+        }
+        return await uploadAndProcessMedia(mediaUrl, prompt);
     } catch (error) {
         console.error('Error in function:', error);
         throw new functions.https.HttpsError('internal', 'Error processing media');
+    }
+});
+
+exports.writeDb = functions.https.onCall(async (data) => {
+    try {
+        await getDatabase().ref('posts/').push({
+           mediaUrl: data.mediaUrl,
+           content: data.content,
+           timestamp: admin.database.ServerValue.TIMESTAMP
+       });
+   } catch (error) {
+       console.error(error, 'error writing to firestore');
+   } 
+});
+
+exports.readDb = functions.https.onCall(async () => {
+    try {
+        const ref = getDatabase().ref('posts');
+        const snapshot = await ref.once('value');
+        const result = snapshot.val();
+        return { data: result.data };
+    } catch (error) {
+        console.error('Error reading data from database:', error);
+        throw new functions.https.HttpsError('internal', 'Unable to read data from database.');
     }
 });
   

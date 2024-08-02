@@ -3,16 +3,13 @@ import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import * as SplashScreen from 'expo-splash-screen';
 import RootNavigator from './src/navigator';
-import { initializeApp } from 'firebase/app';
-import firebaseConfig from './firebase';
+import './firebase.ts';
 
 SplashScreen.preventAutoHideAsync();
 
-initializeApp(firebaseConfig)
-
 export default function App() {
   return (
-    <NavigationContainer onReady={() => SplashScreen.hideAsync()}>
+    <NavigationContainer>
       <View style={{ flex: 1 }}>
         <StatusBar style="auto" />
         <RootNavigator />

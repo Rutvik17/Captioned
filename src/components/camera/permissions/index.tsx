@@ -3,17 +3,15 @@ import { Linking } from 'react-native'
 import type { CameraPermissionStatus } from 'react-native-vision-camera'
 import { Camera } from 'react-native-vision-camera'
 import styled from 'styled-components/native'
-import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { RootStackParamList } from '../../../navigator'
-import * as SplashScreen from 'expo-splash-screen';
 import LottieView from 'lottie-react-native';
+import useCaptionedStore from '../../../store'
 
 const BANNER_IMAGE = require('../../../../assets/images/camera.json');
 
 const StyledPermissionsPage = styled.View`
     flex: 1;
     align-items: center;
+    padding-top: 65px;
     background-color: #7899D4;
 `;
 
@@ -37,10 +35,11 @@ const StyledText = styled.Text`
     text-align: center;
     font-color: #1D355D;
     font-style: italic;
+    margin-horizontal: 20px;
 `;
 
 const PermissionsPage = (): React.ReactElement => {
-    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const { updateStack } = useCaptionedStore();
     const [cameraPermissionStatus, setCameraPermissionStatus] = useState<CameraPermissionStatus>('not-determined')
     const [microphonePermissionStatus, setMicrophonePermissionStatus] = useState<CameraPermissionStatus>('not-determined')
 
@@ -64,12 +63,12 @@ const PermissionsPage = (): React.ReactElement => {
 
     useEffect(() => {
         if (cameraPermissionStatus === 'granted' && microphonePermissionStatus === 'granted') {
-            navigation.navigate('CameraPage');
+            updateStack({ stack: 'root' })
         }
-    }, [cameraPermissionStatus, microphonePermissionStatus, navigation])
+    }, [cameraPermissionStatus, microphonePermissionStatus])
 
     return (
-        <StyledPermissionsPage onLayout={() => SplashScreen.hideAsync()}>
+        <StyledPermissionsPage>
             <LottieView
                 autoPlay
                 style={{
