@@ -28,6 +28,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>com.rutvik.dev.Captioned</string>
+          <string>com.rutvik.dev.Captioned</string>
         </array>
       </dict>
     </array>

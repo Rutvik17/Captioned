@@ -135,11 +135,11 @@ const Indicator = ({ measures, scrollX, data }:
 
     const indicatorWidth = scrollX.interpolate({
         inputRange: [0, SCREEN_WIDTH, 2 * SCREEN_WIDTH],
-        outputRange: [88.66666412353516, 134, 70]
+        outputRange: measures.map(m => m.width)
     })
     const translateX = scrollX.interpolate({
         inputRange: [0, SCREEN_WIDTH, 2 * SCREEN_WIDTH],
-        outputRange: [24.33333396911621, 134, 295]
+        outputRange: measures.map(m => m.x)
     })
     return <IndicatorView style={[
         {
@@ -153,33 +153,28 @@ const Indicator = ({ measures, scrollX, data }:
 }
 
 const Tabs = ({ scrollX, data, onItemPress }: { scrollX: Animated.Value, data: DataItem[], onItemPress: (itemIndex: number) => void }) => {
-    const [measures, setMeasures] = useState<{ x: number, y: number, width: number, height: number }[]>([]);
+    const measures: any = [];
+    const [measurements, setMeasurements] = useState<{ x: number, y: number, width: number, height: number }[]>([]);
     const containerRef = useRef<View>(null);
-
-    useEffect(() => {
-        const measurements: Array<{ x: number, y: number, width: number, height: number }> = [];
-        data.forEach((item, index) => {
-            if (item.ref.current) {
-                item.ref.current.measureLayout(
-                    containerRef.current as View,
-                    (x, y, width, height) => {
-                        measurements.push({ x, y, width, height })
-                        if (measurements.length === data.length) setMeasures(measurements);
-                    });
-            }
-        })
-    }, []);
 
     return (
         <TabsOuterView>
             <TabsInnerView ref={containerRef}>
                 {data.map((item, index) =>
-                    <PressableOpacity key={item.key} onPress={() => onItemPress(index)}>
+                    <PressableOpacity
+                        key={item.key}
+                        onPress={() => onItemPress(index)}
+                        onLayout={(event) => {
+                            measures.push(event.nativeEvent.layout)
+                            if (measures.length === data.length) {
+                                setMeasurements(measures)
+                            }
+                        }}>
                         <Tab item={item} ref={item.ref} len={data.length} />
                     </PressableOpacity>
                 )}
             </TabsInnerView>
-            {measures.length > 0 && <Indicator measures={measures} scrollX={scrollX} data={data} />}
+            {measurements.length === data.length && <Indicator measures={measurements} scrollX={scrollX} data={data} />}
         </TabsOuterView>
     );
 }

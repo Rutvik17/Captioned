@@ -10,7 +10,6 @@ import { MediaPage } from '../components/media';
 import CameraPage from '../components/camera';
 import CaptionsPage from '../components/captions';
 import * as SplashScreen from 'expo-splash-screen';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import useCaptionedStore from '../store';
 
 export type RootStackParamList = {
@@ -32,7 +31,6 @@ const StyledGestureHandlerRootView = styled(GestureHandlerRootView)`flex: 1`;
 
 const RootNavigator = () => {
     const Stack = createNativeStackNavigator<RootStackParamList>();
-    const Tab = createBottomTabNavigator();
     const [onboardingComplete, setOnboardingComplete] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
     const cameraPermission = Camera.getCameraPermissionStatus();
@@ -117,18 +115,7 @@ const RootNavigator = () => {
 
     return (
         <StyledGestureHandlerRootView onLayout={() => SplashScreen.hideAsync()}>
-            <Tab.Navigator>
-                <Tab.Screen
-                    name="Feed"
-                    component={CameraStack}
-                    options={{ headerShown: false }}
-                />
-                <Tab.Screen
-                    name="Camera"
-                    options={{ headerShown: false }}
-                    component={CameraStack}
-                />
-            </Tab.Navigator>
+            {CameraStack()}
         </StyledGestureHandlerRootView>
     )
 };

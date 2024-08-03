@@ -1,7 +1,7 @@
 import type { BlurViewProps } from '@react-native-community/blur'
 import { BlurView } from '@react-native-community/blur'
 import React from 'react'
-import { Platform, StyleSheet } from 'react-native'
+import { Platform } from 'react-native'
 import StaticSafeAreaInsets from 'react-native-static-safe-area-insets'
 import styled from 'styled-components/native'
 
