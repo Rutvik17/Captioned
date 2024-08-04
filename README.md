@@ -2,6 +2,10 @@
 
 Welcome to **Captioned**, a beautifully animated React Native app built with Expo. Captioned allows users to take photos and videos, upload them to Gemini AI to generate captions and tweets, and copy the generated text to the clipboard. This guide will help you set up and run the project.
 
+![onboarding-captioned](https://github.com/user-attachments/assets/dd01f007-ab9a-4c1b-acf3-9762b5fd3f8c)
+![permissions](https://github.com/user-attachments/assets/415c41ef-f10a-4bea-837d-e49d671c3a90)
+![captioned](https://github.com/user-attachments/assets/1ebce2ce-99b1-433a-90e9-c19529cd0559)
+
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
 2. [Environment Variables](#environment-variables)
